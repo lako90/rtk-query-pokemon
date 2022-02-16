@@ -1,8 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import services from './services';
 
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
+  reducer: services.reduce((accumulator, { reducerPath, reducer }) => ({
+    ...accumulator,
+    [reducerPath]: reducer,
+  }), {}),
+
+  middleware: (getDefaultMiddleware) => ([
+    ...getDefaultMiddleware(),
+    ...services.map(({ middleware }) => middleware),
+  ]),
 });
